@@ -65,10 +65,19 @@ slope_fieldname = sprintf('inhib_slope_for_%usec', tx);  % fieldname of slope th
             % After stimulation
             index3 = find(ctr_start1(:,2)==3);
             
-            % Contractions per minute
-            s_in(iRow).p1.contractions_per_min_before_stimulation = length(index1) / (start_stim - ctr_start1(index1(1),1)) * 60;
-            s_in(iRow).p1.contractions_per_min_during_stimulation = length(index2) / (end_stim - start_stim) * 60;
-    
+            % Contractions per minute    
+            if (numel(index1) > 0) == 1 
+                s_in(iRow).p1.contractions_per_min_before_stimulation = length(index1) / (start_stim - ctr_start2(index1(1),1)) * 60;
+            else 
+                s_in(iRow).p1.contractions_per_min_before_stimulation = 0 ; 
+            end 
+
+            if (numel(index2) >= 0) == 1 
+                s_in(iRow).p1.contractions_per_min_during_stimulation = length(index2) / (end_stim - start_stim) * 60;
+            else 
+                s_in(iRow).p1.contractions_per_min_during_stimulation = 0 ; 
+            end 
+
             % Duration of contractions in seconds
             s_in(iRow).p1.duration_of_contractions_before_stimulation = mean(duration(index1));
             s_in(iRow).p1.duration_of_contractions_during_stimulation = mean(duration(index2));
@@ -147,8 +156,17 @@ slope_fieldname = sprintf('inhib_slope_for_%usec', tx);  % fieldname of slope th
             index3 = find(ctr_start2(:,2)==3);
             
             % Contractions per minute 
-            s_in(iRow).p2.contractions_per_min_before_stimulation = length(index1) / (start_stim - ctr_start2(index1(1),1)) * 60;
-            s_in(iRow).p2.contractions_per_min_during_stimulation = length(index2) / (end_stim - start_stim) * 60;
+            if (numel(index1) > 0) == 1 
+                s_in(iRow).p2.contractions_per_min_before_stimulation = length(index1) / (start_stim - ctr_start2(index1(1),1)) * 60;
+            else 
+                s_in(iRow).p2.contractions_per_min_before_stimulation = 0 ; 
+            end 
+
+            if (numel(index2) >= 0) == 1 
+                s_in(iRow).p2.contractions_per_min_during_stimulation = length(index2) / (end_stim - start_stim) * 60;
+            else 
+                s_in(iRow).p2.contractions_per_min_during_stimulation = 0 ; 
+            end 
             
             % Duration of contractions in seconds
             s_in(iRow).p2.duration_of_contractions_before_stimulation = mean(duration(index1));
@@ -158,7 +176,7 @@ slope_fieldname = sprintf('inhib_slope_for_%usec', tx);  % fieldname of slope th
             % Interval between contractions in seconds
             pks_ind1 = pk_locs2(index1);
             interval = zeros(length(pks_ind1),1);
-            if length(pks_ind1) >= 2;
+            if length(pks_ind1) >= 2
                 for i=1:length(pks_ind1)
                     try
                     interval(i) = pks_ind1(i+1) - pks_ind1(i);
@@ -171,7 +189,7 @@ slope_fieldname = sprintf('inhib_slope_for_%usec', tx);  % fieldname of slope th
     
             pks_ind2 = pk_locs2(index2);
             interval = zeros(length(pks_ind2),1);
-            if length(pks_ind1) >= 2;
+            if length(pks_ind1) >= 2
                 for i=1:length(pks_ind2)
                     try
                     interval(i) = pks_ind2(i+1) - pks_ind2(i);

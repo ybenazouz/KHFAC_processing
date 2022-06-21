@@ -16,11 +16,15 @@
 % Edited Version
 % Edited by: Sabine Josemans, shjosemans@gmail.com
 % as product of Technical Medicine Internship November 2021 - February 2022
+% 
+% Edited Version
+% Edited by: Yasmin Ben Azouz, yasminbenazouz@hotmail.com
+% as product of Technical Medicine Internship May 2022 - August 2022 
 %
 % ErasmusMC, dept. Urology, group: functional Urology lab
 % Edited in MATLAB R2021b
 
-close all; clear all; clc;
+close all; clear; %clc;
 
 %% Variables
 DIR_IMPORT = [];        % when desired, set a default directory to select files from, otherwise use = [];
@@ -52,7 +56,9 @@ PRESS2 = 1;
 %% Execute
 [SData, DIR_EXPORT] = load_filesV3(DIR_IMPORT, DIR_EXPORT);
 [SData_mod, FS_PRESS] = modifyDataV4(SData, C_press1, C_press2, DS_FACT, FS_PRESS, FS_POT, F_FILT, HF_BLOCKS, LF_BLOCKS, PRESS1, PRESS2);
-[SData_auto] = plotDataV1(SData_mod,FS_POT, FS_PRESS, C_press1, C_press2);
+%%
+plotDataV1(SData_mod,FS_POT, FS_PRESS, C_press1, C_press2);
+%%
 [SData_auto, start_stim, end_stim] = automaticIntervalSelectionV1(SData_mod,FS_POT, FS_PRESS, HF_BLOCKS, LF_BLOCKS, PRESS1, PRESS2);
 [SData_exp] = calcOutcomeV4(SData_auto, FS_POT, FS_PRESS, TX, HF_BLOCKS, LF_BLOCKS, PRESS1, PRESS2, start_stim, end_stim);
 %%

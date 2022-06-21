@@ -27,12 +27,24 @@ for iRow = 1:numel(s_in) % loop over rows, i.e. selected files
     % Use spectrogram and findchangepts combined to detect changes in
     % frequency. The number of points to be found is based on the number of
     % stimulation blocks that are applied. 
-    if blocks_pot1 ~ 0;
-        [s_pot1,f_pot1,ts_pot1,p_pot1] = spectrogram(potential1, hann(200), 10, [], fs_pot, 'yaxis');
-        ipt_pot1 = findchangepts(p_pot1, 'MaxNumChanges', blocks_pot1*2);
-        % Obtain the timepoints at which the frequency changes. 
-        [hf_stim_times, freq1] = getTimesV1(potential1, blocks_pot1, ts_pot1, ipt_pot1, fs_pot);
-        s_in(iRow).hf_stimulation_frequency = freq1;
+    if blocks_pot1 ~= 0
+        [~,~,ts_pot1,p_pot1] = spectrogram(potential1, hann(200), 10, [], fs_pot, 'yaxis');
+        if max(potential1) > 50 
+            ipt_pot1 = findchangepts(p_pot1, 'MaxNumChanges', blocks_pot1*2);
+            % Obtain the timepoints at which the frequency changes. 
+            if (numel(ipt_pot1) > 0) == 1 
+                [hf_stim_times, freq1] = getTimesV1(potential1, blocks_pot1, ts_pot1, ipt_pot1, fs_pot);
+                s_in(iRow).hf_stimulation_frequency = freq1;
+            else %full block of no stimulation
+                ipt_pot1 = sort(randperm(length(ts_pot1),2)) ; 
+                [hf_stim_times, freq1] = getTimesV1(potential1, blocks_pot1, ts_pot1, ipt_pot1, fs_pot);
+                s_in(iRow).hf_stimulation_frequency = freq1;
+            end
+        else % no stimulation
+            ipt_pot1 = sort(randperm(length(ts_pot1),2)) ; 
+            [hf_stim_times, freq1] = getTimesV1(potential1, blocks_pot1, ts_pot1, ipt_pot1, fs_pot);
+            s_in(iRow).hf_stimulation_frequency = freq1;
+        end 
     else
         disp("No stimulation in potential 1")
         hf_stim_times = [];
@@ -42,8 +54,8 @@ for iRow = 1:numel(s_in) % loop over rows, i.e. selected files
     %% Find the low frequnecy stimulation intervals in potential 2
     % If there is only low frequency stimulation, the two biggest changes
     % in the power spectral density of the signal are detected. 
-    if blocks_pot2 == not(0) && blocks_pot1 == 0;
-        [s_pot2,f_pot2,ts_pot2,p_pot2] = spectrogram(potential2, hann(200), 10, [], fs_pot, 'yaxis');
+    if blocks_pot2 == not(0) && blocks_pot1 == 0
+        [~,~,ts_pot2,p_pot2] = spectrogram(potential2, hann(200), 10, [], fs_pot, 'yaxis');
         ipt_pot2 = findchangepts(p_pot2, 'MaxNumChanges', blocks_pot2*4);
         [lf_stim_times, freq2] = getTimesV1(potential2, blocks_pot2, ts_pot2, ipt_pot2, fs_pot);
         s_in(iRow).lf_stimulation_frequency = freq2;
@@ -52,8 +64,8 @@ for iRow = 1:numel(s_in) % loop over rows, i.e. selected files
     % disruption of the low frequency signal that could also be detected as
     % changes. Therefore, 4 changes are detected, and the first and last
     % are selected as stimulation interval. 
-    elseif blocks_pot2 == not(0) && blocks_pot1==not(0);
-        [s_pot2,f_pot2,ts_pot2,p_pot2] = spectrogram(potential2, hann(200), 10, 20, fs_press, 'yaxis');
+    elseif blocks_pot2 == not(0) && blocks_pot1==not(0)
+        [~,~,ts_pot2,p_pot2] = spectrogram(potential2, hann(200), 10, 20, fs_press, 'yaxis');
          ipt_pot2 = findchangepts(pow2db(p_pot2), 'MaxNumChanges', blocks_pot2*4);         
         ipt_pot2 = [ipt_pot2(1) ipt_pot2(end)];
         [lf_stim_times, freq2] = getTimesV1(potential2, blocks_pot2, ts_pot2, ipt_pot2, fs_pot);
@@ -64,12 +76,12 @@ for iRow = 1:numel(s_in) % loop over rows, i.e. selected files
     end 
     
 %% Add start and end times 
-  if blocks_pot1 ~ 0;
+  if blocks_pot1 ~= 0
      s_in(iRow).hf_startstim    = hf_stim_times(1);
      s_in(iRow).hf_stopstim    = hf_stim_times(2);
   end 
 
-  if blocks_pot2 ~ 0;
+  if blocks_pot2 ~= 0
      s_in(iRow).lf_startstim    = lf_stim_times(1);
      s_in(iRow).lf_stopstim    = lf_stim_times(2);
   end 
@@ -100,7 +112,7 @@ for iRow = 1:numel(s_in) % loop over rows, i.e. selected files
     h2 = subplot(4,1,2); plot(t_pot, potential2, '-k', 'LineWidth', 2); hold on; grid on;
     ylabel('Stimulation Voltage [AU]','FontSize', 10); title('Low frequency stimulation signal') 
     % Plot start and end times of low-frequency stimulation as green
-    if blocks_pot2 ~ 0;
+    if blocks_pot2 ~= 0
        xline([s_in(iRow).lf_startstim s_in(iRow).lf_stopstim], 'LineWidth', linewidth, 'Color', 'g')
     end
 
