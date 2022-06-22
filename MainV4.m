@@ -56,12 +56,9 @@ PRESS2 = 1;
 %% Execute
 [SData, DIR_EXPORT] = load_filesV3(DIR_IMPORT, DIR_EXPORT);
 [SData_mod, FS_PRESS] = modifyDataV4(SData, C_press1, C_press2, DS_FACT, FS_PRESS, FS_POT, F_FILT, HF_BLOCKS, LF_BLOCKS, PRESS1, PRESS2);
-%%
 plotDataV1(SData_mod,FS_POT, FS_PRESS, C_press1, C_press2);
-%%
 [SData_auto, start_stim, end_stim] = automaticIntervalSelectionV1(SData_mod,FS_POT, FS_PRESS, HF_BLOCKS, LF_BLOCKS, PRESS1, PRESS2);
 [SData_exp] = calcOutcomeV4(SData_auto, FS_POT, FS_PRESS, TX, HF_BLOCKS, LF_BLOCKS, PRESS1, PRESS2, start_stim, end_stim);
-%%
 exportFuncV4(SData_exp, DIR_EXPORT, PRESS1, PRESS2);
 
 msgbox('Operation Completed','Success')
